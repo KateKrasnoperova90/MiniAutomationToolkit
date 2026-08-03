@@ -1,0 +1,39 @@
+## Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## Visual Studio cache / options
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## VS Code / Rider
+.vscode/
+.idea/
+
+## Test results
+[Tt]est[Rr]esult*/
+
+## NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+## Temporary and OS files
+*.tmp
+*.temp
+*.log
+*.cache
+*.swp
+*~
+Thumbs.db
+.DS_Store
+
+## Publish output
+[Pp]ublish/
+*.pubxml
