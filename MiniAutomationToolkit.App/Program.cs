@@ -1,41 +1,63 @@
-﻿using MiniAutomationToolkit.Core.Models;
+﻿using MiniAutomationToolkit.Core.Helpers;
+using MiniAutomationToolkit.Core.Models;
 using MiniAutomationToolkit.Core.Services;
 
-bool continueCalculating = true;
+PrintStartupMessage();      // Задание 1
+RunDiscountCalculator();    // Задание 2
+RunScreenshotSearch();      // Задание 3
+RunScreenshotSearchWithoutMatches(); // Задание 3
 
-while (continueCalculating)
+// ===== Задание 1: сообщение о запуске =====
+static void PrintStartupMessage()
 {
-    ClientType? clientType = AskClientType();
-    if (clientType is null)
+    Console.WriteLine("MiniAutomationToolkit started");
+    Console.WriteLine();
+}
+
+// ===== Задание 2: калькулятор скидок с вводом от пользователя =====
+static void RunDiscountCalculator()
+{
+    bool continueCalculating = true;
+
+    while (continueCalculating)
     {
-        Console.WriteLine("Error: invalid client type selected.");
-    }
-    else
-    {
-        double? amount = AskOrderAmount();
-        if (amount is null)
+        // Спрашиваем тип клиента (1/2/3). Если выбор некорректный — clientType будет null.
+        ClientType? clientType = AskClientType();
+        if (clientType is null)
         {
-            Console.WriteLine("Error: entered value is not a valid number.");
+            Console.WriteLine("Error: invalid client type selected.");
         }
         else
         {
-            try
+            // Спрашиваем сумму заказа. Если введено не число — amount будет null.
+            double? amount = AskOrderAmount();
+            if (amount is null)
             {
-                double discount = DiscountCalculator.CalculateDiscount(amount.Value, clientType.Value);
-                Console.WriteLine(
-                    $"Client: {clientType}, amount: {amount:0.##}, discount: {discount:0.##}");
+                Console.WriteLine("Error: entered value is not a valid number.");
             }
-            catch (ArgumentOutOfRangeException ex)
+            else
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                try
+                {
+                    double discount = DiscountCalculator.CalculateDiscount(amount.Value, clientType.Value);
+                    Console.WriteLine(
+                        $"Client: {clientType}, amount: {amount:0.##}, discount: {discount:0.##}");
+                }
+                catch (ArgumentOutOfRangeException ex)
+                {
+                    // Сработает, если сумма отрицательная.
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
             }
         }
-    }
 
-    Console.WriteLine();
-    continueCalculating = AskToContinue();
-    Console.WriteLine();
+        Console.WriteLine();
+        continueCalculating = AskToContinue();
+        Console.WriteLine();
+    }
 }
+
+// Печатает меню выбора клиента и возвращает выбор пользователя
 
 static ClientType? AskClientType()
 {
@@ -54,6 +76,7 @@ static ClientType? AskClientType()
     };
 }
 
+// Просит ввести сумму заказа.
 static double? AskOrderAmount()
 {
     Console.Write("Enter order amount: ");
@@ -62,10 +85,66 @@ static double? AskOrderAmount()
     return double.TryParse(input, out double amount) ? amount : null;
 }
 
+// Спрашивает, продолжать ли цикл расчётов.
 static bool AskToContinue()
 {
     Console.Write("Check another discount? (y/n): ");
     string? input = Console.ReadLine();
 
     return string.Equals(input, "y", StringComparison.OrdinalIgnoreCase);
+}
+
+// ===== Задание 3: поиск первого скриншота в списке файлов =====
+static void RunScreenshotSearch()
+{
+    List<string> fileNames =
+    [
+        "screen_001.ng",
+        "error_2024.log",
+        "screen_002.png",
+        "debug.txt",
+        "report_final.PNG",
+        "session.log",
+        "notes.txt",
+        "screen_003.png",
+        "trace_007.log",
+        "readme.txt",
+        "capture_01.png",
+        "output.log",
+        "summary.txt",
+        "screen_004.png",
+        "warning.log",
+        "checklist.txt",
+        "screen_005.png",
+        "audit.log",
+        "config.txt",
+        "screen_006.png"
+    ];
+
+    string firstScreenshot = FileSearcher.FindFirstScreenshot(fileNames);
+    Console.WriteLine($"First screenshot found: {firstScreenshot}");
+    Console.WriteLine();
+}
+
+// ===== Задание 3: демонстрация обработки ошибки, когда скриншотов нет =====
+static void RunScreenshotSearchWithoutMatches()
+{
+    List<string> fileNamesWithoutScreenshots =
+    [
+        "error_2024.log",
+        "debug.txt",
+        "session.log",
+        "notes.txt",
+        "trace_007.log",
+        "readme.txt"
+    ];
+
+    try
+    {
+        FileSearcher.FindFirstScreenshot(fileNamesWithoutScreenshots);
+    }
+    catch (FileNotFoundException ex)
+    {
+        Console.WriteLine($"Error: {ex.Message}");
+    }
 }
