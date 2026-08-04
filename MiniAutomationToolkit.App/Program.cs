@@ -6,6 +6,7 @@ PrintStartupMessage();      // Задание 1
 RunDiscountCalculator();    // Задание 2
 RunScreenshotSearch();      // Задание 3
 RunScreenshotSearchWithoutMatches(); // Задание 3
+RunUserDtoDemo();           // Задание 4
 
 // ===== Задание 1: сообщение о запуске =====
 static void PrintStartupMessage()
@@ -144,6 +145,44 @@ static void RunScreenshotSearchWithoutMatches()
         FileSearcher.FindFirstScreenshot(fileNamesWithoutScreenshots);
     }
     catch (FileNotFoundException ex)
+    {
+        Console.WriteLine($"Error: {ex.Message}");
+    }
+}
+
+// ===== Задание 4: неизменяемая модель пользователя =====
+static void RunUserDtoDemo()
+{
+    // --- Успешное создание ---
+    UserDto user = new UserDto("Alex Smith", "alex@example.com");
+    Console.WriteLine($"User created: {user.Name}, {user.Email}");
+
+    // --- Равенство по значению ---
+    UserDto sameUser = new UserDto("Alex Smith", "alex@example.com");
+    Console.WriteLine($"Objects are equal: {user == sameUser}");
+
+    // --- Неизменяемость ---
+    UserDto modifiedUser = user with { };
+    Console.WriteLine($"Original user is unchanged: {user.Name}, {user.Email}");
+    Console.WriteLine();
+
+    // --- Некорректные данные ---
+    TryCreateUser("", "alex@example.com");            // пустое имя
+    TryCreateUser("Alex Smith", "");                  // пустой email
+    TryCreateUser("Alex Smith", "alex.example.com");  // нет символа @
+    TryCreateUser("Alex Smith", "alex @example.com"); // пробел в email
+    Console.WriteLine();
+}
+
+// Вспомогательный метод: пытается создать пользователя и печатает сообщение об ошибке, если данные некорректны.
+static void TryCreateUser(string name, string email)
+{
+    try
+    {
+        UserDto user = new UserDto(name, email);
+        Console.WriteLine($"User created: {user.Name}, {user.Email}");
+    }
+    catch (ArgumentException ex)
     {
         Console.WriteLine($"Error: {ex.Message}");
     }
