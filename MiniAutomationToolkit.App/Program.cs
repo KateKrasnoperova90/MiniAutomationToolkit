@@ -1,12 +1,14 @@
 ﻿using MiniAutomationToolkit.Core.Helpers;
 using MiniAutomationToolkit.Core.Models;
 using MiniAutomationToolkit.Core.Services;
+using MiniAutomationToolkit.Core.Pages;
 
 PrintStartupMessage();      // Задание 1
 RunDiscountCalculator();    // Задание 2
 RunScreenshotSearch();      // Задание 3
 RunScreenshotSearchWithoutMatches(); // Задание 3
 RunUserDtoDemo();           // Задание 4
+RunPageObjectDemo();        // Задание 5
 
 // ===== Задание 1: сообщение о запуске =====
 static void PrintStartupMessage()
@@ -186,4 +188,61 @@ static void TryCreateUser(string name, string email)
     {
         Console.WriteLine($"Error: {ex.Message}");
     }
+}
+
+// ===== Задание 5: базовая страница и наследники =====
+static void RunPageObjectDemo()
+{
+    List<BasePage> pages =
+    [
+        new LoginPage(),
+        new HomePage()
+    ];
+
+    foreach (BasePage page in pages)
+    {
+        page.Load();
+    }
+
+    Console.WriteLine();
+    CheckUrlsAreUnique(pages);
+
+    // --- Демонстрация ситуации с дубликатом ---
+    // Добавляем ещё одну LoginPage: её Url "/login" повторится.
+    List<BasePage> pagesWithDuplicate =
+    [
+        new LoginPage(),
+        new HomePage(),
+        new LoginPage()
+    ];
+
+    try
+    {
+        CheckUrlsAreUnique(pagesWithDuplicate);
+    }
+    catch (InvalidOperationException ex)
+    {
+        Console.WriteLine($"Error: {ex.Message}");
+    }
+
+    Console.WriteLine();
+}
+
+// Проверяет, что среди страниц нет двух с одинаковым Url.
+static void CheckUrlsAreUnique(List<BasePage> pages)
+{
+    // Select достаёт из каждого объекта только его Url — получается список адресов.
+    // Distinct убирает повторы: если два адреса совпали, останется один.
+    int uniqueUrlCount = pages
+        .Select(page => page.Url)
+        .Distinct()
+        .Count();
+
+    // Если после удаления повторов элементов стало меньше — значит, дубликаты были.
+    if (uniqueUrlCount != pages.Count)
+    {
+        throw new InvalidOperationException("Duplicate page URLs found.");
+    }
+
+    Console.WriteLine("All page URLs are unique");
 }
