@@ -6,6 +6,7 @@ using MiniAutomationToolkit.Core.Pages;
 using MiniAutomationToolkit.Core.Configuration;
 using MiniAutomationToolkit.Core.Extensions;
 using MiniAutomationToolkit.Core.Simulations;
+using MiniAutomationToolkit.Core.Validation;
 
 PrintStartupMessage();      // Задание 1
 RunDiscountCalculator();    // Задание 2
@@ -17,6 +18,7 @@ RunAppConfigDemo();         // Задание 6
 RunStringExtensionsDemo();  // Задание 7
 await RunAsyncOperationDemo(); // Задание 8
 RunErrorLoggerDemo();       // Задание 9
+RunGuardDemo();             // Задание 10
 
 // ===== Задание 1: сообщение о запуске =====
 static void PrintStartupMessage()
@@ -361,4 +363,30 @@ static void RunErrorLoggerDemo()
     }
 
     Console.WriteLine();
+}
+
+// ===== Задание 10: защитный валидатор =====
+static void RunGuardDemo()
+{
+    // Три сценария: корректное значение, отрицательное и ноль.
+    CheckNumber(5);
+    CheckNumber(-5);
+    CheckNumber(0);
+
+    Console.WriteLine();
+}
+
+// Вспомогательный метод: пытается проверить число и выводит результат: либо успех, либо текст ошибки.
+static void CheckNumber(int number)
+{
+    try
+    {
+        Guard.EnsurePositive(number);
+        Console.WriteLine($"Value {number} is valid.");
+    }
+    catch (ValidationException ex)
+    {
+        // Ловим ИМЕННО ValidationException.
+        Console.WriteLine($"Error: {ex.Message}");
+    }
 }
