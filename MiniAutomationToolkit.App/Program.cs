@@ -3,6 +3,7 @@ using MiniAutomationToolkit.Core.Models;
 using MiniAutomationToolkit.Core.Services;
 using MiniAutomationToolkit.Core.Pages;
 using MiniAutomationToolkit.Core.Configuration;
+using MiniAutomationToolkit.Core.Extensions;
 
 PrintStartupMessage();      // Задание 1
 RunDiscountCalculator();    // Задание 2
@@ -11,6 +12,7 @@ RunScreenshotSearchWithoutMatches(); // Задание 3
 RunUserDtoDemo();           // Задание 4
 RunPageObjectDemo();        // Задание 5
 RunAppConfigDemo();         // Задание 6
+RunStringExtensionsDemo();  // Задание 7
 
 // ===== Задание 1: сообщение о запуске =====
 static void PrintStartupMessage()
@@ -276,6 +278,28 @@ static void RunAppConfigDemo()
     catch (KeyNotFoundException ex)
     {
         Console.WriteLine($"Error: {ex.Message}");
+    }
+
+    Console.WriteLine();
+}
+
+// ===== Задание 7: метод расширения для строк =====
+static void RunStringExtensionsDemo()
+{
+    string?[] inputs =
+    [
+        "https://google.com",
+        "http://example.org",
+        "ftp://files.example.com",
+        null,
+        "HTTPS://SITE.EXAMPLE.COM"
+    ];
+
+    foreach (string? input in inputs)
+    {
+        bool result = input.HasHttpScheme();
+
+        Console.WriteLine($"{input ?? "<null>"} → {result}");
     }
 
     Console.WriteLine();
