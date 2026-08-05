@@ -1,0 +1,4 @@
+baseUrl=https://demo.example.com
+timeout=30
+headless=true
+retryCount=3

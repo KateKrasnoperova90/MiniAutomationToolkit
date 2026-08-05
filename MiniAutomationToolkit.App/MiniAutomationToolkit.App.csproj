@@ -1,8 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\MiniAutomationToolkit.Core\MiniAutomationToolkit.Core.csproj" />
-  </ItemGroup>
+<ItemGroup>
+  <ProjectReference Include="..\MiniAutomationToolkit.Core\MiniAutomationToolkit.Core.csproj" />
+  <None Update="data\appsettings.txt">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+</ItemGroup>
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>

@@ -2,6 +2,7 @@
 using MiniAutomationToolkit.Core.Models;
 using MiniAutomationToolkit.Core.Services;
 using MiniAutomationToolkit.Core.Pages;
+using MiniAutomationToolkit.Core.Configuration;
 
 PrintStartupMessage();      // Задание 1
 RunDiscountCalculator();    // Задание 2
@@ -9,6 +10,7 @@ RunScreenshotSearch();      // Задание 3
 RunScreenshotSearchWithoutMatches(); // Задание 3
 RunUserDtoDemo();           // Задание 4
 RunPageObjectDemo();        // Задание 5
+RunAppConfigDemo();         // Задание 6
 
 // ===== Задание 1: сообщение о запуске =====
 static void PrintStartupMessage()
@@ -245,4 +247,36 @@ static void CheckUrlsAreUnique(List<BasePage> pages)
     }
 
     Console.WriteLine("All page URLs are unique");
+}
+
+// ===== Задание 6: чтение настроек из текстового файла =====
+static void RunAppConfigDemo()
+{
+    string configPath = Path.Combine(AppContext.BaseDirectory, "data", "appsettings.txt");
+
+    AppConfig config = new AppConfig(configPath);
+
+    // Для каждого параметра запрашиваем СВОЙ тип
+    string baseUrl = config.GetSetting<string>("baseUrl");
+    int timeout = config.GetSetting<int>("timeout");
+    bool headless = config.GetSetting<bool>("headless");
+    int retryCount = config.GetSetting<int>("retryCount");
+
+    Console.WriteLine($"baseUrl: {baseUrl}");
+    Console.WriteLine($"timeout: {timeout}");
+    Console.WriteLine($"headless: {headless}");
+    Console.WriteLine($"retryCount: {retryCount}");
+    Console.WriteLine();
+
+    // --- Демонстрация отсутствующего ключа ---
+    try
+    {
+        config.GetSetting<string>("missingKey");
+    }
+    catch (KeyNotFoundException ex)
+    {
+        Console.WriteLine($"Error: {ex.Message}");
+    }
+
+    Console.WriteLine();
 }
