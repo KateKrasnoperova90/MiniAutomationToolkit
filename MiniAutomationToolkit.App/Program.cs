@@ -16,6 +16,7 @@ RunPageObjectDemo();        // Задание 5
 RunAppConfigDemo();         // Задание 6
 RunStringExtensionsDemo();  // Задание 7
 await RunAsyncOperationDemo(); // Задание 8
+RunErrorLoggerDemo();       // Задание 9
 
 // ===== Задание 1: сообщение о запуске =====
 static void PrintStartupMessage()
@@ -326,5 +327,38 @@ static async Task RunAsyncOperationDemo()
 
     Console.WriteLine($"Async result: {result}");
     Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds} ms");
+    Console.WriteLine();
+}
+
+// ===== Задание 9: логирование ошибок чтения файлов =====
+static void RunErrorLoggerDemo()
+{
+    // Собираем пути к трём файлам в папке data рядом с запущенным приложением.
+    string dataFolder = Path.Combine(AppContext.BaseDirectory, "data");
+    string existingFilePath = Path.Combine(dataFolder, "input.txt");
+    string missingFilePath = Path.Combine(dataFolder, "missing.txt");
+    string logFilePath = Path.Combine(dataFolder, "errors.log");
+
+    ErrorLogger logger = new ErrorLogger();
+
+    // --- Сценарий 1: файл существует, чтение проходит успешно ---
+    string? existingContent = logger.TryReadFile(existingFilePath, logFilePath);
+    Console.WriteLine("Reading existing file:");
+    Console.WriteLine(existingContent);
+    Console.WriteLine();
+
+    // --- Сценарий 2: файла нет, метод вернёт null и запишет ошибку в лог ---
+    string? missingContent = logger.TryReadFile(missingFilePath, logFilePath);
+    Console.WriteLine($"Reading missing file, result is null: {missingContent is null}");
+    Console.WriteLine();
+
+    // --- Выводим содержимое лога ---
+    // Проверяем существование файла: если ошибок не было, лога может и не быть.
+    if (File.Exists(logFilePath))
+    {
+        Console.WriteLine("Error log content:");
+        Console.WriteLine(File.ReadAllText(logFilePath));
+    }
+
     Console.WriteLine();
 }
