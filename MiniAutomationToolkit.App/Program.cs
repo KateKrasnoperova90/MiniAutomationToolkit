@@ -1,9 +1,11 @@
-﻿using MiniAutomationToolkit.Core.Helpers;
+﻿using System.Diagnostics;
+using MiniAutomationToolkit.Core.Helpers;
 using MiniAutomationToolkit.Core.Models;
 using MiniAutomationToolkit.Core.Services;
 using MiniAutomationToolkit.Core.Pages;
 using MiniAutomationToolkit.Core.Configuration;
 using MiniAutomationToolkit.Core.Extensions;
+using MiniAutomationToolkit.Core.Simulations;
 
 PrintStartupMessage();      // Задание 1
 RunDiscountCalculator();    // Задание 2
@@ -13,6 +15,7 @@ RunUserDtoDemo();           // Задание 4
 RunPageObjectDemo();        // Задание 5
 RunAppConfigDemo();         // Задание 6
 RunStringExtensionsDemo();  // Задание 7
+await RunAsyncOperationDemo(); // Задание 8
 
 // ===== Задание 1: сообщение о запуске =====
 static void PrintStartupMessage()
@@ -302,5 +305,26 @@ static void RunStringExtensionsDemo()
         Console.WriteLine($"{input ?? "<null>"} → {result}");
     }
 
+    Console.WriteLine();
+}
+
+// ===== Задание 8: асинхронная длительная операция =====
+
+static async Task RunAsyncOperationDemo()
+{
+    LongOperationSimulator simulator = new LongOperationSimulator();
+
+    // Stopwatch — встроенный секундомер для измерения времени выполнения.
+    // StartNew сразу создаёт объект и запускает отсчёт.
+    Stopwatch stopwatch = Stopwatch.StartNew();
+
+    // await приостанавливает выполнение этого метода до готовности результата, но НЕ блокирует поток — в этом ключевое отличие от .Result и .Wait().
+    string result = await simulator.LongOperationAsync();
+
+    // Stop останавливает секундомер, дальше читаем накопленное время.
+    stopwatch.Stop();
+
+    Console.WriteLine($"Async result: {result}");
+    Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds} ms");
     Console.WriteLine();
 }
