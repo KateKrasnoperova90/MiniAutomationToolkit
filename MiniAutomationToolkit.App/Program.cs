@@ -7,6 +7,7 @@ using MiniAutomationToolkit.Core.Configuration;
 using MiniAutomationToolkit.Core.Extensions;
 using MiniAutomationToolkit.Core.Simulations;
 using MiniAutomationToolkit.Core.Validation;
+using MiniAutomationToolkit.Core.Repositories;
 
 PrintStartupMessage();      // Задание 1
 RunDiscountCalculator();    // Задание 2
@@ -19,6 +20,7 @@ RunStringExtensionsDemo();  // Задание 7
 await RunAsyncOperationDemo(); // Задание 8
 RunErrorLoggerDemo();       // Задание 9
 RunGuardDemo();             // Задание 10
+RunProductRepositoryDemo(); // Задание 11
 
 // ===== Задание 1: сообщение о запуске =====
 static void PrintStartupMessage()
@@ -389,4 +391,44 @@ static void CheckNumber(int number)
         // Ловим ИМЕННО ValidationException.
         Console.WriteLine($"Error: {ex.Message}");
     }
+}
+
+// ===== Задание 11: загрузка каталога товаров из CSV =====
+static void RunProductRepositoryDemo()
+{
+    string csvPath = Path.Combine(AppContext.BaseDirectory, "data", "products.csv");
+
+    List<Product> products = ProductRepository.LoadFromCsv(csvPath);
+    Console.WriteLine($"Products loaded: {products.Count}");
+    Console.WriteLine();
+
+    // Бюджет 10.
+    PrintAffordableProducts(products, ProductCategory.Food, 10m);
+
+    // Бюджет 1.
+    PrintAffordableProducts(products, ProductCategory.Food, 1m);
+}
+
+static void PrintAffordableProducts(
+    List<Product> products,
+    ProductCategory category,
+    decimal maxPrice)
+{
+    List<string> names = ProductRepository.GetAffordableProducts(products, category, maxPrice);
+
+    Console.WriteLine($"{category} products under {maxPrice}:");
+
+    if (names.Count == 0)
+    {
+        Console.WriteLine("No products found");
+    }
+    else
+    {
+        foreach (string name in names)
+        {
+            Console.WriteLine($"  {name}");
+        }
+    }
+
+    Console.WriteLine();
 }
